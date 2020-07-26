@@ -1,19 +1,28 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule } from "@angular/forms";
 
 import { AppComponent } from './app.component';
 
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { UserService } from 'src/services/user.service';
+import { UsernameComponent } from './username/username.component';
+import { GameService } from 'src/services/game.service';
+import { GameComponent } from './game/game.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, UsernameComponent, GameComponent],
   imports: [
     BrowserModule,
+    FormsModule,
     SocketIoModule.forRoot(config)
   ],
-  providers: [],
+  providers: [
+    GameService,
+    UserService,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

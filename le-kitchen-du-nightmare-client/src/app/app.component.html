@@ -1,7 +1,14 @@
-<ng-container ng *ngIf="loaded">
-  <div *ngFor="let answer of step">
-    <div>{{answer}}</div>
-  </div>
-  <div>Hello World</div>
-</ng-container>
+<div class="users" *ngIf="(user$ | async) as user; else anonymous">
+  <button *ngIf="user.name === 'Chef Liard'" (click)="restart()">Restart the game</button>
+  The users connected are:
+  <ng-container *ngFor="let otherUser of users$ | async">
+    <div *ngIf="otherUser.id !== user.id">
+      {{ otherUser.name }}
+    </div>
+  </ng-container>
+  <app-game [currentStep$]="step$" [choices$]="choices$"></app-game>
+</div>
 
+<ng-template #anonymous>
+  <app-username (nameSubmitted)="sendName($event)"></app-username>
+</ng-template>

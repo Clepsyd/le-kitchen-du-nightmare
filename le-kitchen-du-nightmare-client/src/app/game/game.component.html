@@ -1,0 +1,12 @@
+<h1>the game!</h1>
+
+<div>
+  We are at step #{{ step + 1 }}
+</div>
+
+All right, what's next?
+<ul>
+  <li *ngFor="let choice of choices$ | async" (click)="sendChoice(choice)">
+    {{ choice }}
+  </li>
+</ul>
