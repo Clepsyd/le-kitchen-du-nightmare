@@ -4,17 +4,23 @@
   "description": "",
   "main": "server.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "postinstall": "cd le-kitchen-du-nightmare-client && npm install && npx ng build --aot --prod"
+  },
+  "engines": {
+    "node": "~12.16.3",
+    "npm": "~6.14.4"
   },
   "author": "GL",
   "license": "MIT",
   "dependencies": {
     "@types/node": "^14.0.26",
     "express": "^4.17.1",
-    "nodemon": "^2.0.4",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
+    "nodemon": "^2.0.4",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
     "typescript": "~3.8.3"

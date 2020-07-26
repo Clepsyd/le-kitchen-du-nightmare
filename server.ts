@@ -1,11 +1,11 @@
-const clientDir = "le-kitchen-du-nightmare-client"
+const clientDir = "le-kitchen-du-nightmare-client";
 
 // Load steps and choices answers for each
 const steps = require("./instructions.json");
 let currentStep = 0;
 
 // The array of connected users
-let users: {id: string, name: string}[] = []
+let users: { id: string; name: string }[] = [];
 
 // Install express server
 const express = require("express");
@@ -29,81 +29,84 @@ app.get("/", function (req, res) {
 
 io.on("connect", (client) => {
   console.log("New connection: " + client.id);
-  onConnect(client)
+  onConnect(client);
 
-  client.on('updateName', (name: string) => onUpdateName(client, name))
-  client.on('disconnect', () => onDisconnect(client));
-  client.on('choice', (choiceData) => onChoice(choiceData, client));
+  client.on("updateName", (name: string) => onUpdateName(client, name));
+  client.on("disconnect", () => onDisconnect(client));
+  client.on("choice", (choiceData) => onChoice(choiceData, client));
 
-  client.on('restart', restart);
+  client.on("restart", restart);
 });
 
 server.listen(port);
 console.log(`Server listening on http://localhost:${port}`);
 
 function onConnect(client) {
-  users.push({id: client.id, name: ''});
+  users.push({ id: client.id, name: "" });
 }
 
 function onDisconnect(client) {
   console.log("Disconnected: " + client.id);
-  const user_index = users.findIndex(el => el.id === client.id);
+  const user_index = users.findIndex((el) => el.id === client.id);
   users.splice(user_index, 1);
   sendUsersToAll();
 }
 
 function onUpdateName(client, name: string) {
-  const user_index = users.findIndex(el => el.id === client.id);
-  let user = users[user_index]
+  const user_index = users.findIndex((el) => el.id === client.id);
+  let user = users[user_index];
   user.name = name;
-  client.emit('nameReceived', user);
-  client.emit('currentStep', getCurrentStep());
+  client.emit("nameReceived", user);
+  client.emit("currentStep", getCurrentStep());
   sendUsersToAll();
 }
 
-function getCurrentStep(){
+function getCurrentStep() {
   return {
     step: currentStep,
-    choices: steps[currentStep]
-  }
+    choices: steps[currentStep],
+  };
 }
 
 function onChoice(choiceData, client) {
   if (choiceData.step !== currentStep) {
     // Looks like the client is not on the right step of the game.
-    client.emit('currentStep', getCurrentStep());
+    client.emit("currentStep", getCurrentStep());
   } else {
-    handlePlayerChoice(choiceData.choice, client)
+    handlePlayerChoice(choiceData.choice, client);
   }
 }
 
 function handlePlayerChoice(choice, client) {
-  const user = getUserByClientID(client.id)
-  if(choice == steps[currentStep][0]) {
+  const user = getUserByClientID(client.id);
+  if (choice == steps[currentStep][0]) {
     if (currentStep === steps.length) {
-      io.emit('win', user)
+      io.emit("win", user);
       currentStep = 0;
     } else {
       currentStep += 1;
-      io.emit('guess', {user: user, correct: true});
-      io.emit('currentStep', getCurrentStep());
+      io.emit("guess", { user: user, correct: true });
+      io.emit("currentStep", getCurrentStep());
     }
   } else {
-    io.emit('guess', {user: user, correct: false});
+    io.emit("guess", { user: user, correct: false });
     currentStep = 0;
-    io.emit('currentStep', getCurrentStep());
+    io.emit("currentStep", getCurrentStep());
   }
 }
 
 function getUserByClientID(clientID: string) {
-  return users.find(user => user.id === clientID)
+  return users.find((user) => user.id === clientID);
 }
 
 function sendUsersToAll() {
-  io.emit('users', users.filter(user => !!user.name));
+  io.emit(
+    "users",
+    users.filter((user) => !!user.name)
+  );
 }
 
 function restart() {
   currentStep = 0;
-  io.emit('currentStep', getCurrentStep());
+  io.emit("currentStep", getCurrentStep());
 }
