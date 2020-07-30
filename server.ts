@@ -58,6 +58,7 @@ function onUpdateName(client, name: string) {
   user.name = name;
   client.emit("nameReceived", user);
   client.emit("currentStep", getCurrentStep());
+  client.emit("answers", getCurrentAnswers());
   sendUsersToAll();
 }
 
@@ -66,6 +67,10 @@ function getCurrentStep() {
     step: currentStep,
     choices: steps[currentStep],
   };
+}
+
+function getCurrentAnswers() {
+  return steps.slice(0, currentStep).map(answers => answers[0]);
 }
 
 function onChoice(choiceData, client) {
@@ -80,19 +85,19 @@ function onChoice(choiceData, client) {
 function handlePlayerChoice(choice, client) {
   const user = getUserByClientID(client.id);
   if (choice == steps[currentStep][0]) {
+    currentStep += 1;
     if (currentStep === steps.length) {
       io.emit("win", user);
       currentStep = 0;
     } else {
-      currentStep += 1;
       io.emit("guess", { user: user, correct: true });
-      io.emit("currentStep", getCurrentStep());
     }
   } else {
     io.emit("guess", { user: user, correct: false });
     currentStep = 0;
-    io.emit("currentStep", getCurrentStep());
   }
+  io.emit("answers", getCurrentAnswers());
+  io.emit("currentStep", getCurrentStep());
 }
 
 function getUserByClientID(clientID: string) {
@@ -108,5 +113,6 @@ function sendUsersToAll() {
 
 function restart() {
   currentStep = 0;
+  io.emit("answers", getCurrentAnswers());
   io.emit("currentStep", getCurrentStep());
 }

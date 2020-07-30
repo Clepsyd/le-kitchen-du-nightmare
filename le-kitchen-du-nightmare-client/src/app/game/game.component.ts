@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { GameService } from 'src/services/game.service';
+import { GameService, Guess } from 'src/services/game.service';
+import { User } from 'src/models/user.models';
 
 @Component({
   selector: 'app-game',
@@ -13,16 +14,38 @@ export class GameComponent implements OnInit, OnDestroy {
 
   step: number;
   choices: string[];
-  stepSub: Subscription;
-  choiceSub: Subscription;
+  subs: Subscription[];
+  answers$: Observable<string[]>;
+  win$: Observable<User>;
+  lastGuesser: User;
+  timeout: any;
+
+  showFeedback = false;
+  guessIsCorrect = false;
+  gameOver = false;
 
   constructor(private gameService: GameService) { }
 
   ngOnInit(): void {
-    this.stepSub = this.currentStep$.subscribe(step => this.step = step);
-    this.choiceSub = this.choices$.subscribe(choices => {
-      this.choices = this.shuffle(choices);
-    });
+    this.subs = [];
+    this.subs.push(this.currentStep$.subscribe(step => this.step = step));
+    this.subs.push(
+      this.choices$.subscribe(choices => {
+        this.choices = this.shuffle(choices);
+      })
+    );
+    this.subs.push(
+      this.gameService.guess$.subscribe((guess: Guess) => {
+        this.handleGuess(guess);
+      })
+    );
+    this.subs.push(
+      this.gameService.win$.subscribe(user => {
+        this.lastGuesser = user;
+        this.gameOver = true;
+      })
+    )
+    this.answers$ = this.gameService.getAnswers()
   }
 
   shuffle(choices) {
@@ -48,9 +71,26 @@ export class GameComponent implements OnInit, OnDestroy {
     this.gameService.sendChoice(this.step, choice);
   }
 
+  handleGuess(guess: Guess) {
+    this.guessIsCorrect = guess.correct;
+    this.lastGuesser = guess.user;
+    this.timeoutFeedback();
+  }
+
+  private timeoutFeedback() {
+    if (this.timeout) {
+      clearTimeout(this.timeout)
+    }
+    this.showFeedback = true;
+    this.timeout = setTimeout(() => {
+      this.showFeedback = false;
+    }, 3000);
+  }
+
   ngOnDestroy() {
-    this.choiceSub.unsubscribe();
-    this.stepSub.unsubscribe();
+    for (let sub of this.subs) {
+      sub.unsubscribe();
+    }
   }
 
 }

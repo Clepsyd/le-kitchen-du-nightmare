@@ -1,12 +1,39 @@
-<h1>the game!</h1>
-
-<div>
-  We are at step #{{ step + 1 }}
+<div class="step-count">
+  Make me a crème pâtissière! Allez!
 </div>
 
-All right, what's next?
-<ul>
-  <li *ngFor="let choice of choices$ | async" (click)="sendChoice(choice)">
-    {{ choice }}
-  </li>
-</ul>
+<div [ngSwitch]="gameOver">
+  <div *ngSwitchCase="true" class="correct win">
+    <p>
+      Awesome job, well done {{ lastGuesser.name }} with that last answer and to everyone!
+    </p>
+    <div>
+      <iframe src="https://giphy.com/embed/3orieKgDrWAvCoS2d2" width="480" height="362" frameBorder="0" allowFullScreen></iframe>
+      <iframe src="https://giphy.com/embed/MOWPkhRAUbR7i" width="480" height="217" frameBorder="0" allowFullScreen></iframe>
+    </div>
+  </div>
+
+  <div *ngSwitchDefault>
+    <div *ngIf="lastGuesser" [ngClass]="{'correct': guessIsCorrect, 'wrong': !guessIsCorrect}">
+      {{ lastGuesser.name }} {{ guessIsCorrect ? " got the last one right!" : "messed up big time..." }}
+    </div>
+    <div class="feedback" *ngIf="showFeedback">
+      <iframe *ngIf="!guessIsCorrect" src="https://giphy.com/embed/uoVUPXJgfy2m4" width="480" height="270" frameBorder="0" allowFullScreen></iframe>
+      <iframe *ngIf="guessIsCorrect" src="https://giphy.com/embed/MOWPkhRAUbR7i" width="480" height="217" frameBorder="0" allowFullScreen></iframe>
+    </div>
+
+    <div>
+      <div  class="answers">
+        Steps already taken:
+        <div class="answer" *ngFor="let answer of answers$ | async;">
+          {{ answer }}
+        </div>
+      </div>
+      <div class="choices">
+        <div class="choice" *ngFor="let choice of choices$ | async" (click)="sendChoice(choice)">
+          {{ choice }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

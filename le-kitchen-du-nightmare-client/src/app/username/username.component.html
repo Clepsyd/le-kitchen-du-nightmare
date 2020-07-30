@@ -1,7 +1,11 @@
+<h3>Ready to show me what you've got? Tell me who you are:</h3>
+
 <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
   <label for="first">First name:</label>
-  <input name="first" ngModel required #first="ngModel">
+  <input name="first" ngModel required autofocus #first="ngModel">
+  <br>
   <label for="last">Last name:</label>
   <input name="last" ngModel>
+  <br>
   <button>Submit</button>
 </form>

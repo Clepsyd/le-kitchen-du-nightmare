@@ -1,14 +1,33 @@
-<div class="users" *ngIf="(user$ | async) as user; else anonymous">
-  <button *ngIf="user.name === 'Chef Liard'" (click)="restart()">Restart the game</button>
-  The users connected are:
-  <ng-container *ngFor="let otherUser of users$ | async">
-    <div *ngIf="otherUser.id !== user.id">
-      {{ otherUser.name }}
-    </div>
-  </ng-container>
-  <app-game [currentStep$]="step$" [choices$]="choices$"></app-game>
-</div>
+<header>Le kitchen du nightmare</header>
 
-<ng-template #anonymous>
-  <app-username (nameSubmitted)="sendName($event)"></app-username>
-</ng-template>
+<main class="content">
+  <div class="game" *ngIf="(user$ | async) as user; else anonymous">
+    <button *ngIf="user.name === 'Chef Liard'" (click)="restart()">Restart the game</button>
+    <div class="users">
+      Connected users:
+      <ng-container *ngFor="let otherUser of users$ | async">
+        <div class="user" *ngIf="otherUser.id !== user.id">
+          {{ otherUser.name }}
+        </div>
+      </ng-container>
+    </div>
+    <app-game [currentStep$]="step$" [choices$]="choices$"></app-game>
+  </div>
+
+  <ng-template #anonymous>
+    <app-username (nameSubmitted)="sendName($event)"></app-username>
+  </ng-template>
+</main>
+
+<footer>
+  <p>No apprentice was hurt in the making of this website.</p>
+  <p>
+    <small><em>(as far as we know... then again they do the most stupid things you'd never even think possible and...UGGGH don't get me started on apprentices...)</em></small>
+  </p>
+  <p>
+    This site and all its content was approved by GLs Consortium Inc.©
+    <img src="https://media-exp1.licdn.com/dms/image/C4E03AQE5tZIcFCk8lg/profile-displayphoto-shrink_200_200/0?e=1601510400&v=beta&t=Gpnoi-RyPdUGy7_huWxl2juCs73uqf7SXE_X67h2JiA" alt="GL">
+    <img src="https://media-exp1.licdn.com/dms/image/C5603AQESAeDtYQbWuA/profile-displayphoto-shrink_200_200/0?e=1601510400&v=beta&t=y65Js9-AujHpEwiBPL5nW5-AwgBxVGfvuOiKyZCDCaw" alt="GL bis">
+  </p>
+</footer>
+

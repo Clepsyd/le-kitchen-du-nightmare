@@ -9,7 +9,7 @@ interface CurrentStepData {
   choices: string[];
 }
 
-interface Guess {
+export interface Guess {
   user: User,
   correct: boolean
 }
@@ -20,8 +20,9 @@ interface Guess {
 export class GameService {
   private step$: Observable<number>;
   private choices$: Observable<string[]>;
+  private answers$: Observable<string[]>;
   guess$: Observable<Guess>;
-  winner$: Observable<User>;
+  win$: Observable<User>;
 
   constructor(private socket: Socket) {
     this.step$ = this.socket
@@ -31,12 +32,15 @@ export class GameService {
       .fromEvent('currentStep')
       .pipe(map((data: CurrentStepData) => data.choices));
     this.guess$ = this.socket.fromEvent('guess');
-    this.winner$ = this.socket.fromEvent('win');
+    this.win$ = this.socket.fromEvent('win');
+    this.answers$ = this.socket.fromEvent('answers');
   }
 
   getStep(): Observable<number> { return this.step$ }
   getChoices(): Observable<string[]> { return this.choices$ }
-
+  getAnswers(): Observable<string[]> {
+    return this.answers$
+  }
   sendChoice(step: number, choice:string) {
     this.socket.emit('choice', {step: step, choice: choice});
   }
