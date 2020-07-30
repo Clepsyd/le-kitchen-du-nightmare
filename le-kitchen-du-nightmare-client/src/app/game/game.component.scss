@@ -1,7 +1,3 @@
-:host {
-  margin-bottom: 100px;
-}
-
 .choices {
   display: flex;
   max-width: 80%;
@@ -62,11 +58,11 @@
 }
 
 .feedback {
-  position: absolute;
+  position: fixed;
   z-index: 1;
-  left: 50%;
+  text-align: center;
   bottom: 0;
-  width: fit-content;
+  width: 100%;
 }
 
 .correct {

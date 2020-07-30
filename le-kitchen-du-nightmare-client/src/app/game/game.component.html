@@ -17,10 +17,6 @@
     <div *ngIf="lastGuesser" [ngClass]="{'correct': guessIsCorrect, 'wrong': !guessIsCorrect}">
       {{ lastGuesser.name }} {{ guessIsCorrect ? " got the last one right!" : "messed up big time..." }}
     </div>
-    <div class="feedback" *ngIf="showFeedback">
-      <iframe *ngIf="!guessIsCorrect" src="https://giphy.com/embed/uoVUPXJgfy2m4" width="480" height="270" frameBorder="0" allowFullScreen></iframe>
-      <iframe *ngIf="guessIsCorrect" src="https://giphy.com/embed/MOWPkhRAUbR7i" width="480" height="217" frameBorder="0" allowFullScreen></iframe>
-    </div>
 
     <div>
       <div  class="answers">
@@ -34,6 +30,11 @@
           {{ choice }}
         </div>
       </div>
+    </div>
+
+    <div class="feedback" *ngIf="showFeedback">
+      <iframe *ngIf="!guessIsCorrect" src="https://giphy.com/embed/uoVUPXJgfy2m4" width="480" height="270" frameBorder="0" allowFullScreen></iframe>
+      <iframe *ngIf="guessIsCorrect" src="https://giphy.com/embed/MOWPkhRAUbR7i" width="480" height="217" frameBorder="0" allowFullScreen></iframe>
     </div>
   </div>
 </div>
